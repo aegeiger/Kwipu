@@ -1,0 +1,7 @@
+llama-index-core
+llama-index-llms-ollama
+llama-index-embeddings-ollama
+watchdog
+nest-asyncio
+pyyaml
+rich

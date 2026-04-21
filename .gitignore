@@ -1,0 +1,36 @@
+# Storage (generated graph index)
+storage_graph/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Obsidian internals
+.obsidian/
+
+# Hash cache (generated)
+.file_hashes.json
+
+# User knowledge base (keep examples only)
+knowledge_base/*
+!knowledge_base/examples/
