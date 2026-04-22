@@ -1,4 +1,4 @@
-# Kwipu
+# Kwipu (geode_graph project)
 
 A local Graph RAG system that turns your markdown notes into a queryable knowledge graph. Ask questions in natural language and get answers that connect information across multiple files.
 
