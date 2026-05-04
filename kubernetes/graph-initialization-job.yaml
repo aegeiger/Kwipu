@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kwipu-graph-initialization
+  namespace: kwipu
+spec:
+  backoffLimit: 1
+  activeDeadlineSeconds: 300
+  template:
+    spec:
+      containers:
+      - name: kwipu
+        image: quay.io/aicatalyst/kwipu-kwipu:latest
+        imagePullPolicy: IfNotPresent
+        command: ["python", "geode_graph.py", "--fast"]
+        env:
+        - name: OLLAMA_HOST
+          valueFrom:
+            secretKeyRef:
+              name: kwipu-secrets
+              key: OLLAMA_HOST
+        resources:
+          requests:
+            memory: "4Gi"
+            cpu: "2000m"
+          limits:
+            memory: "8Gi"
+            cpu: "4000m"
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+      - name: ollama
+        image: ollama
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+      restartPolicy: Never
