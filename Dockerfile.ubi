@@ -1,0 +1,28 @@
+FROM registry.access.redhat.com/ubi9/python-312
+
+WORKDIR /opt/app-root/src
+
+# Install system dependencies for Python builds
+USER 0
+RUN dnf install -y gcc python3-devel && \
+    dnf clean all
+
+# Copy application code and install dependencies
+COPY . .
+RUN pip install -r requirements.txt
+
+# Return to non-root user
+USER 1001
+
+# Set group permissions for OpenShift compatibility
+USER 0
+RUN chgrp -R 0 /opt/app-root && \
+    chmod -R g=u /opt/app-root
+USER 1001
+
+# Set entry point and default command
+ENTRYPOINT ["python", "geode_graph.py"]
+CMD ["--help"]
+
+# Set environment variable (must be provided at runtime via K8s secret/configmap)
+ENV OLLAMA_HOST="http://ollama-service:11434"
