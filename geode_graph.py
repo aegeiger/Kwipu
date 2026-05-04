@@ -585,7 +585,6 @@ class WritHerGraphRAG:
             except Exception as e:
                 safe_print(f"Load error: {e}. Rebuilding index...")
                 self._build_index_unlocked()
-                self._build_index_unlocked()
             self._retrievers_dirty = True
         finally:
             self._rw_lock.release_write()
