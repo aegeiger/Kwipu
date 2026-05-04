@@ -1,0 +1,49 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kwipu-multilingual-support-job
+  namespace: kwipu
+  labels:
+    app.kubernetes.io/name: kwipu
+    app.kubernetes.io/managed-by: autopoc
+spec:
+  backoffLimit: 1
+  activeDeadlineSeconds: 120
+  template:
+    spec:
+      containers:
+      - name: kwipu
+        image: quay.io/aicatalyst/kwipu-kwipu:latest
+        imagePullPolicy: IfNotPresent
+        command: ["python", "geode_graph.py", "--fast", "-l", "it", "-q", "Cos'è il progetto Alpha?"]
+        resources:
+          requests:
+            memory: 4Gi
+            cpu: 2000m
+          limits:
+            memory: 8Gi
+            cpu: 4000m
+        env:
+        - name: OLLAMA_HOST
+          valueFrom:
+            secretKeyRef:
+              name: kwipu-secrets
+              key: OLLAMA_HOST
+      - name: ollama
+        image: ollama
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            memory: 4Gi
+            cpu: 2000m
+          limits:
+            memory: 8Gi
+            cpu: 4000m
+        command: ["ollama", "serve"]
+        env:
+        - name: OLLAMA_HOST
+          valueFrom:
+            secretKeyRef:
+              name: kwipu-secrets
+              key: OLLAMA_HOST
+      restartPolicy: Never
