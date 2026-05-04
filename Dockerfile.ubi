@@ -1,28 +1,26 @@
 FROM registry.access.redhat.com/ubi9/python-312
 
+LABEL maintainer="autopoc" \
+      io.openshift.tags="" \
+      io.k8s.description="AutoPoC-generated UBI image for kwipu"
+
 WORKDIR /opt/app-root/src
 
-# Install system dependencies for Python builds
 USER 0
-RUN dnf install -y gcc python3-devel && \
-    dnf clean all
-
-# Copy application code and install dependencies
 COPY . .
-RUN pip install -r requirements.txt
-
-# Return to non-root user
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pip install llama-index && \
+    dnf install -y gcc && \
+    dnf clean all
 USER 1001
 
-# Set group permissions for OpenShift compatibility
+# OpenShift: support arbitrary UIDs
 USER 0
 RUN chgrp -R 0 /opt/app-root && \
     chmod -R g=u /opt/app-root
 USER 1001
 
-# Set entry point and default command
+ENV OLLAMA_HOST=""
+
 ENTRYPOINT ["python", "geode_graph.py"]
 CMD ["--help"]
-
-# Set environment variable (must be provided at runtime via K8s secret/configmap)
-ENV OLLAMA_HOST="http://ollama-service:11434"
